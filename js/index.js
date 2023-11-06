@@ -1,7 +1,7 @@
 class UIGood {
     constructor(g) {
         this.good = g,
-        this.selectedNumber = 0
+            this.selectedNumber = 0
     }
     getTotalPrice() {
         return this.good.price * this.selectedNumber
@@ -31,20 +31,20 @@ class UIStore {
     }
     getTotalPrice() {
         var sum = 0;
-        for(var i = 0; i < this.uiGoods.length; i++) {
+        for (var i = 0; i < this.uiGoods.length; i++) {
             sum += this.uiGoods[i].getTotalPrice()
         }
-        return sum
+        return sum.toFixed(2)
     }
     increase(index) {
         this.uiGoods[index].increase()
     }
-    decreast(index) {
+    decrease(index) {
         this.uiGoods[index].decrease()
     }
     getTotalSelectedNumber() {
         var sum = 0
-        for(var i = 0; i < this.uiGoods.length; i++) {
+        for (var i = 0; i < this.uiGoods.length; i++) {
             sum += this.uiGoods[i].selectedNumber
         }
         return sum
@@ -55,15 +55,24 @@ class UIStore {
     deliveryable() {
         return this.getTotalPrice() >= this.deliveryThreshold
     }
+    getAddtionAmoutForDelivery() {
+        return Math.round(this.deliveryThreshold - this.getTotalPrice())
+    }
 }
 
 class UI {
     constructor() {
         this.store = new UIStore()
         this.doms = {
-            goodsContainer:document.querySelector('.goods-list')
+            goodsContainer: document.querySelector('.goods-list'),
+            cartTotalNumberSpan: document.querySelector('.footer-car-total'),
+            deliveryLabelDiv: document.querySelector('.footer-car-tip'),
+            footerPayDiv: document.querySelector('.footer-pay'),
+            footerCarDiv: document.querySelector('.footer-car'),
+            footerCarBadge: document.querySelector('.footer-car-badge')
         }
         this.createHtml()
+        this.updateFooterStyle()
     }
     createHtml() {
         var html = ''
@@ -86,7 +95,7 @@ class UI {
                 </p>
                 <div class="goods-btns">
                   <i class="iconfont i-jianhao"></i>
-                  <span>0</span>
+                  <span>${uiGood.selectedNumber}</span>
                   <i class="iconfont i-jiajianzujianjiahao"></i>
                 </div>
               </div>
@@ -94,6 +103,45 @@ class UI {
           </div>`
         }
         this.doms.goodsContainer.innerHTML = html
+    }
+    increase(index) {
+        this.store.increase(index)
+        this.updateGoodItemStyle(index)
+        this.updateFooterStyle()
+    }
+    decrease(index) {
+        this.store.decrease(index)
+        this.updateGoodItemStyle(index)
+        this.updateFooterStyle()
+    }
+    updateGoodItemStyle(index) {
+        const uiGood = this.store.uiGoods[index]
+        const goodItemElement = this.doms.goodsContainer.children[index]
+        if (uiGood.isSelected()) {
+            goodItemElement.classList.add('active')
+        } else {
+            goodItemElement.classList.remove('active')
+        }
+        const numberSpanElement = goodItemElement.querySelector('.goods-btns span')
+        numberSpanElement.textContent = uiGood.selectedNumber
+    }
+    updateFooterStyle() {
+        this.doms.cartTotalNumberSpan.textContent = this.store.getTotalPrice()
+        this.doms.deliveryLabelDiv.textContent = `配送费￥${this.store.deliveryPrice}`
+        if (this.store.deliveryable()) {
+            this.doms.footerPayDiv.classList.add('active')
+        } else {
+            this.doms.footerPayDiv.classList.remove('active')
+            const footerPaySpan = this.doms.footerPayDiv.querySelector('span')
+            footerPaySpan.textContent = `还差￥${this.store.getAddtionAmoutForDelivery()}元起送`
+        }
+        if (this.store.cartIsEmpty()) {
+            this.doms.footerCarDiv.classList.remove('active')
+        } else {
+            this.doms.footerCarDiv.classList.add('active')
+            this.doms.footerCarBadge.textContent = this.store.getTotalSelectedNumber()
+        }
+
     }
 }
 
