@@ -7,6 +7,7 @@
   display: flex;
   color: #333;
 }
+
 .menu {
   background: #f5f5f5;
   width: 190rem;
@@ -14,6 +15,7 @@
   padding-bottom: 50rem;
   flex: 0 0 auto;
 }
+
 .menu::-webkit-scrollbar {
   width: 0;
 }
@@ -26,16 +28,19 @@
   padding: 0 30rem;
   position: relative;
 }
+
 .menu-item span {
   font-size: 30rem;
   line-height: 40rem;
   max-height: 80rem;
   overflow: hidden;
 }
+
 .menu-item.active {
   font-weight: bold;
   background: #fff;
 }
+
 .menu-item.active::before {
   content: '';
   position: absolute;
@@ -49,6 +54,7 @@
   flex-grow: 1;
   overflow-y: scroll;
 }
+
 .goods-list::-webkit-scrollbar {
   width: 0;
 }
@@ -58,6 +64,7 @@
   padding: 30rem 20rem;
   display: flex;
 }
+
 .goods-pic {
   width: 200rem;
   height: 200rem;
@@ -65,11 +72,13 @@
   border: 1rem solid rgba(0, 0, 0, 0.06);
   flex: 0 0 auto;
 }
+
 .goods-info {
   flex: 1 1 auto;
   padding: 0 35rem;
   overflow: hidden;
 }
+
 .goods-title {
   font-size: 35rem;
   overflow: hidden;
@@ -77,13 +86,16 @@
   white-space: nowrap;
   margin-bottom: 20rem;
 }
+
 .goods-desc {
   font-size: 24rem;
-  white-space: nowrap;
+  line-height: 36rem;
+  height: 108rem;
   overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 20rem;
+  max-height: 108rem;
+  margin-bottom: 5rem;
 }
+
 .goods-sell {
   color: #858687;
   font-size: 24rem;
@@ -93,13 +105,16 @@
   margin-bottom: 20rem;
   display: flex;
 }
+
 .goods-sell span:first-child {
   margin-right: 18rem;
 }
+
 .goods-confirm {
   display: flex;
   justify-content: space-between;
 }
+
 .goods-price {
   display: flex;
   font-size: 35rem;
@@ -107,16 +122,19 @@
   color: #f60;
   align-items: flex-end;
 }
+
 .goods-price-unit {
   font-size: 25rem;
   margin-bottom: 4rem;
   font-weight: normal;
 }
+
 .goods-btns {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .goods-btns .iconfont {
   width: 40rem;
   height: 40rem;
@@ -127,10 +145,12 @@
   line-height: 40rem;
   text-align: center;
 }
+
 .goods-btns span {
   margin: 0 15rem;
   display: none;
 }
+
 .goods-btns .i-jianhao {
   border: 1rem solid #4a90e1;
   background: #fff;
@@ -138,9 +158,11 @@
   font-weight: bold;
   display: none;
 }
+
 .goods-item.active span {
   display: block;
 }
+
 .goods-item.active .i-jianhao {
   display: block;
 }
