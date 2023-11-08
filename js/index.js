@@ -69,16 +69,29 @@ class UI {
             deliveryLabelDiv: document.querySelector('.footer-car-tip'),
             footerPayDiv: document.querySelector('.footer-pay'),
             footerCarDiv: document.querySelector('.footer-car'),
-            footerCarBadge: document.querySelector('.footer-car-badge')
+            footerCarBadge: document.querySelector('.footer-car-badge'),
+            addToCartDiv: document.querySelector('.add-to-car')
+        }
+        const rect = this.doms.footerCarDiv.getBoundingClientRect()
+        this.targetLocation = {
+            x: rect.x + rect.width * 0.5,
+            y: rect.y + rect.height * 0.2
         }
         this.createHtml()
+        this.addClickEvent()
         this.updateFooterStyle()
+        this.addEventListener()
+    }
+    addEventListener() {
+        this.doms.footerCarDiv.addEventListener('animationend', function () {
+            this.classList.remove('animate')
+        })
     }
     createHtml() {
         var html = ''
         for (var i = 0; i < this.store.uiGoods.length; i++) {
             var uiGood = this.store.uiGoods[i]
-            html += `        <div class="goods-item">
+            html += `<div class="goods-item">
             <img src="${uiGood.good.pic}" alt="" class="goods-pic" />
             <div class="goods-info">
               <h2 class="goods-title">${uiGood.good.title}</h2>
@@ -94,9 +107,9 @@ class UI {
                   <span>${uiGood.good.price}</span>
                 </p>
                 <div class="goods-btns">
-                  <i class="iconfont i-jianhao"></i>
+                  <i index=${i} class="iconfont i-jianhao"></i>
                   <span>${uiGood.selectedNumber}</span>
-                  <i class="iconfont i-jiajianzujianjiahao"></i>
+                  <i index=${i} class="iconfont i-jiajianzujianjiahao"></i>
                 </div>
               </div>
             </div>
@@ -104,15 +117,29 @@ class UI {
         }
         this.doms.goodsContainer.innerHTML = html
     }
+    addClickEvent() {
+        this.doms.goodsContainer.addEventListener('click',(event)=>{
+            const element = event.target
+            if (element.classList.contains('i-jiajianzujianjiahao')) {
+                const index = element.getAttribute('index')
+                this.increase(index)
+            }else if (element.classList.contains('i-jianhao')) {
+                const index = element.getAttribute('index')
+                this.decrease(index)
+            }
+        })
+    }
     increase(index) {
         this.store.increase(index)
         this.updateGoodItemStyle(index)
         this.updateFooterStyle()
+        this.iconButtonAnimation(index)
     }
     decrease(index) {
         this.store.decrease(index)
         this.updateGoodItemStyle(index)
         this.updateFooterStyle()
+        this.iconButtonAnimation(index)
     }
     updateGoodItemStyle(index) {
         const uiGood = this.store.uiGoods[index]
@@ -141,9 +168,33 @@ class UI {
             this.doms.footerCarDiv.classList.add('active')
             this.doms.footerCarBadge.textContent = this.store.getTotalSelectedNumber()
         }
+    }
+    addAnimationToCart() {
+        this.doms.footerCarDiv.classList.add('animate')
+    }
+    iconButtonAnimation(index) {
+        const div = document.createElement('div')
+        div.className = 'add-to-car'
+        const i = document.createElement('i')
+        i.className = 'iconfont i-jiajianzujianjiahao'
+        div.append(i)
+        const plusButton = this.doms.goodsContainer.children[index].querySelector('.i-jiajianzujianjiahao')
+        const originRect = plusButton.getBoundingClientRect()
 
+        div.style.transform = `translateX(${originRect.x}px`
+        i.style.transform = `translateY(${originRect.y}px)`
+        document.body.append(div)
+        div.clientHeight
+        div.style.transform = `translate(${this.targetLocation.x}px`
+        i.style.transform = `translateY(${this.targetLocation.y}px)`
+        const that = this
+        div.addEventListener('transitionend', function () {
+            this.remove()
+            that.addAnimationToCart()
+        }, {
+            once: true
+        })
     }
 }
 
-const ui = new UI()
-console.log(ui);
+new UI()
