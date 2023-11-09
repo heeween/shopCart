@@ -18,17 +18,60 @@ class UIGood {
     }
 }
 
+
+class UICategory {
+    constructor(goodsIdList, title) {
+        this.goodsIdList = goodsIdList
+        this.title = title
+    }
+    getUIGoodList() {
+        var uiGoodList = []
+        for (var i = 0; i < uiGoodArray.length; i++) {
+            if (this.goodsIdList.includes(uiGoodArray[i].good.id)) {
+                uiGoodList.push(uiGoodArray[i])
+            }
+        }
+        return uiGoodList
+    }
+
+}
+
 class UIStore {
     constructor() {
-        var UIGoods = []
-        for (let i = 0; i < goods.length; i++) {
-            const uiGood = new UIGood(goods[i])
-            UIGoods.push(uiGood)
-        }
-        this.uiGoods = UIGoods
+        this.uiGoods = goods.map((good) => {
+            return new UIGood(good)
+        })
+        this.uiCategories = categories.map((category) => {
+            return new UICategory(category.goodIdList, category.title)
+        })
         this.deliveryThreshold = 30
         this.deliveryPrice = 5
     }
+    selectedCategory(index) {
+        this.selectedCategoryIndex = index
+    }
+    getSelectedUIGoodList() {
+        return this.getUIGoodList(this.selectedCategoryIndex)
+    }
+    getUIGoodList(index) {
+        var uiGoodList = []
+        const category = this.uiCategories[index]
+        for (var i = 0; i < this.uiGoods.length; i++) {
+            if (category.goodsIdList.includes(this.uiGoods[i].good.id)) {
+                uiGoodList.push(this.uiGoods[i])
+            }
+        }
+        return uiGoodList
+    }
+    getSelectedNumberOfCategory(index) {
+        const uiGoodList = this.getUIGoodList(index)
+        return uiGoodList.map((good)=>{
+            return good.selectedNumber
+        }).reduce((pre,cur)=>{
+            return pre+cur
+        },0)
+    }
+
     getTotalPrice() {
         var sum = 0;
         for (var i = 0; i < this.uiGoods.length; i++) {
@@ -37,10 +80,12 @@ class UIStore {
         return sum.toFixed(2)
     }
     increase(index) {
-        this.uiGoods[index].increase()
+        const selectedUIGoodList = this.getUIGoodList(this.selectedCategoryIndex)
+        selectedUIGoodList[index].increase()
     }
     decrease(index) {
-        this.uiGoods[index].decrease()
+        const selectedUIGoodList = this.getUIGoodList(this.selectedCategoryIndex)
+        selectedUIGoodList[index].decrease()
     }
     getTotalSelectedNumber() {
         var sum = 0
@@ -64,6 +109,7 @@ class UI {
     constructor() {
         this.store = new UIStore()
         this.doms = {
+            goodsMenu: document.querySelector('.menu'),
             goodsContainer: document.querySelector('.goods-list'),
             cartTotalNumberSpan: document.querySelector('.footer-car-total'),
             deliveryLabelDiv: document.querySelector('.footer-car-tip'),
@@ -77,21 +123,35 @@ class UI {
             x: rect.x + rect.width * 0.5,
             y: rect.y + rect.height * 0.2
         }
-        this.createHtml()
+        this.createGoodsMenu()
         this.addClickEvent()
         this.updateFooterStyle()
         this.addEventListener()
+        this.selectCategory(0)
     }
     addEventListener() {
         this.doms.footerCarDiv.addEventListener('animationend', function () {
             this.classList.remove('animate')
         })
     }
-    createHtml() {
+    createGoodsMenu() {
         var html = ''
-        for (var i = 0; i < this.store.uiGoods.length; i++) {
-            var uiGood = this.store.uiGoods[i]
-            html += `<div class="goods-item">
+        for (var i = 0; i < this.store.uiCategories.length; i++) {
+            const uicategory = this.store.uiCategories[i]
+            html += `<div index =${i} class="menu-item">
+            <span>${uicategory.title}</span>
+            <span class="menu-item-badge"></span>
+            </div>`
+        }
+        this.doms.goodsMenu.innerHTML = html
+    }
+    createAndUpdateGoodsHtml() {
+        this.doms.goodsContainer.innerHTML = null
+        var html = ''
+        const selectedUIGoodList = this.getSelectedUIGoodList()
+        for (var i = 0; i < selectedUIGoodList.length; i++) {
+            var uiGood = selectedUIGoodList[i]
+            html += `<div class="goods-item ${uiGood.isSelected()?'active':''}">
             <img src="${uiGood.good.pic}" alt="" class="goods-pic" />
             <div class="goods-info">
               <h2 class="goods-title">${uiGood.good.title}</h2>
@@ -118,29 +178,65 @@ class UI {
         this.doms.goodsContainer.innerHTML = html
     }
     addClickEvent() {
-        this.doms.goodsContainer.addEventListener('click',(event)=>{
+        this.doms.goodsMenu.addEventListener('click', (event) => {
+            const element = event.target
+            if (element === this.activeElement) {
+                return
+            }
+            const selectedIndex = element.getAttribute('index')
+            this.selectCategory(selectedIndex)
+        })
+        this.doms.goodsContainer.addEventListener('click', (event) => {
             const element = event.target
             if (element.classList.contains('i-jiajianzujianjiahao')) {
                 const index = element.getAttribute('index')
                 this.increase(index)
-            }else if (element.classList.contains('i-jianhao')) {
+            } else if (element.classList.contains('i-jianhao')) {
                 const index = element.getAttribute('index')
                 this.decrease(index)
             }
         })
+    }
+    selectCategory(index) {
+        if (this.activeElement) {
+            this.activeElement.classList.remove('active')
+        }
+        const currentElement = this.doms.goodsMenu.children[index]
+        currentElement.classList.add('active')
+        this.activeElement = currentElement
+        this.store.selectedCategory(index)
+        this.createAndUpdateGoodsHtml()
     }
     increase(index) {
         this.store.increase(index)
         this.updateGoodItemStyle(index)
         this.updateFooterStyle()
         this.iconButtonAnimation(index)
+        this.updateGoodsMenu()
     }
     decrease(index) {
         this.store.decrease(index)
         this.updateGoodItemStyle(index)
         this.updateFooterStyle()
         this.iconButtonAnimation(index)
+        this.updateGoodsMenu()
     }
+    updateGoodsMenu() {
+        for (let index = 0; index < this.store.uiCategories.length; index++) {
+            const badgeNumber = this.store.getSelectedNumberOfCategory(index)
+            const badgeSpan = this.doms.goodsMenu.children[index].querySelector('.menu-item-badge')
+            if (badgeNumber <= 0) {
+                badgeSpan.style.display = 'none'
+            }else {
+                badgeSpan.style.display = 'block'
+                badgeSpan.textContent = badgeNumber
+            }
+        }
+    }
+    getSelectedUIGoodList() {
+        return this.store.getSelectedUIGoodList()
+    }
+
     updateGoodItemStyle(index) {
         const uiGood = this.store.uiGoods[index]
         const goodItemElement = this.doms.goodsContainer.children[index]
@@ -196,5 +292,4 @@ class UI {
         })
     }
 }
-
-new UI()
+const ui = new UI()

@@ -30,16 +30,33 @@
 }
 
 .menu-item span {
+  pointer-events: none;
   font-size: 30rem;
   line-height: 40rem;
   max-height: 80rem;
   overflow: hidden;
+}
+.menu-item-badge {
+  color: white;
+  position: absolute;
+  width: 35rem;
+  height: 35rem;
+  background: #ec5533;
+  font-size: 25rem;
+  text-align: center;
+  border-radius: 50%;
+  line-height: 35rem;
+  right: 0;
+  top: 0;
+  display: none;
 }
 
 .menu-item.active {
   font-weight: bold;
   background: #fff;
 }
+
+
 
 .menu-item.active::before {
   content: '';

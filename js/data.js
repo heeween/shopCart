@@ -1,5 +1,6 @@
 var goods = [
   {
+    id:'1111',
     pic: './assets/g1.png',
     title: '椰云拿铁',
     desc: `1人份【年度重磅，一口吞云】
@@ -15,6 +16,7 @@ var goods = [
     price: 32,
   },
   {
+    id:'2222',
     pic: './assets/g2.png',
     title: '生椰拿铁',
     desc: `1人份【YYDS，无限回购】
@@ -27,6 +29,7 @@ var goods = [
     price: 19.9,
   },
   {
+    id:'3333',
     pic: './assets/g3.png',
     title: '加浓 美式',
     desc: `1人份【清醒加倍，比标美多一份Espresso】
@@ -37,6 +40,7 @@ var goods = [
     price: 20.3,
   },
   {
+    id:'4444',
     pic: './assets/g4.png',
     title: '瓦尔登蓝钻瑞纳冰',
     desc: `1人份【爆款回归！蓝色治愈力量】
@@ -47,6 +51,7 @@ var goods = [
     price: 38,
   },
   {
+    id:'5555',
     pic: './assets/g5.png',
     title: '椰云精萃美式',
     desc: `1人份【不用吸管 大口吞云！】
@@ -61,3 +66,47 @@ var goods = [
     price: 21.12,
   },
 ];
+var categories = [
+  {
+    goodIdList:['1111'],
+    title:'推荐'
+  },
+  {
+    goodIdList:['1111','2222','3333','4444','5555'],
+    title:'热销'
+  },
+  {
+    goodIdList:['3333','4444','5555'],
+    title:'推荐'
+  },
+  {
+    goodIdList:['1111','2222','3333'],
+    title:'折扣'
+  },
+  {
+    goodIdList:['1111','2222','4444','5555'],
+    title:'夏日必喝咖啡'
+  },
+  {
+    goodIdList:['2222','3333','4444','5555'],
+    title:'进店必喝'
+  },
+  {
+    goodIdList:['1111','2222','3333','5555'],
+    title:'只喝美式'
+  }
+]
+
+{/* <div class="menu-item active"><span>推荐</span></div>
+<div class="menu-item"><span>热销</span></div>
+<div class="menu-item"><span>折扣</span></div>
+<div class="menu-item"><span>夏日冰咖必喝榜</span></div>
+<div class="menu-item"><span>进店必喝</span></div>
+<div class="menu-item"><span>只喝美式</span></div>
+<div class="menu-item"><span>酷爽特调水果冰萃</span></div>
+<div class="menu-item"><span>经典奶咖</span></div>
+<div class="menu-item"><span>创意奶咖</span></div>
+<div class="menu-item"><span>瑞纳冰季</span></div>
+<div class="menu-item"><span>不喝咖啡</span></div>
+<div class="menu-item"><span>轻食甜品</span></div>
+<div class="menu-item"><span>热卖套餐</span></div> */}
